@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -39,12 +42,10 @@ jobs:
           path: ./*.mrpack
 
       - name: Create Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: ./*.mrpack
-          tag_name: build-${{ github.run_number }}
-          name: Stratos Build ${{ github.run_number }}
           draft: false
           prerelease: false
         env:
