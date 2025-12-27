@@ -1,0 +1,51 @@
+name: Build Stratos Packs
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Install packwiz
+        run: go install github.com/packwiz/packwiz@latest
+
+      - name: Build Stratos Base
+        run: |
+          cd stratos-base
+          ~/go/bin/packwiz modrinth export -o ../stratos-base.mrpack
+
+      - name: Build Stratos Plus
+        run: |
+          # Only runs if the folder exists
+          if [ -d "stratos-plus" ]; then
+            cd stratos-plus
+            ~/go/bin/packwiz modrinth export -o ../stratos-plus.mrpack
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stratos-packs
+          path: ./*.mrpack
+
+      - name: Create Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./*.mrpack
+          tag_name: build-${{ github.run_number }}
+          name: Stratos Build ${{ github.run_number }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

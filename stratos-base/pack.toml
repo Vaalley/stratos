@@ -1,0 +1,13 @@
+name = "Stratos Base"
+author = "Valentin"
+version = "1.0.0"
+pack-format = "packwiz:1.1.0"
+
+[index]
+file = "index.toml"
+hash-format = "sha256"
+hash = "1877c41721dd0ac3fe6e85afe69f98962057aebf8eec432e41013a472922abf7"
+
+[versions]
+fabric = "0.18.4"
+minecraft = "1.21.10"
